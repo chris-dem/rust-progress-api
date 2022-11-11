@@ -1,5 +1,5 @@
 use core::fmt;
-use std::{time::Duration,thread::sleep, fmt::Arguments, rc::Rc, cell::RefCell, borrow::BorrowMut};
+use std::{time::Duration,thread::sleep, fmt::Arguments, rc::Rc, cell::{RefCell, Ref, RefMut}, borrow::BorrowMut};
 
 pub const ESC :&str = "\x1B[2J\x1B[1;1H";
 
@@ -10,13 +10,27 @@ trait Logger {
 
 struct StringLogger(RefCell<String>);
 
+impl StringLogger {
+    pub fn new(st : String) -> Self {
+        StringLogger(RefCell::new(st))
+    }
+
+    pub fn borrow_string(&self) -> Ref<'_, String> {
+        self.0.borrow()
+    } 
+    
+    pub fn mut_borrow_string(&self) -> RefMut<'_, String> {
+        self.0.borrow_mut()
+    } 
+}
+
 impl Logger for StringLogger {
     fn print(&self, value : &Arguments<'_>) {
         self.0.borrow_mut().push_str(format!("{}",value).as_str());
     }
 }
 
-type Inp<'a> = Option<&'a mut dyn Logger>;
+type Inp<'a> = Option<&'a dyn Logger>;
 
 #[derive(Clone, Copy)]
 struct UnBounded;
@@ -129,14 +143,11 @@ mod tests {
     fn it_works() {
         let inp  = vec![1,2,3,4];
         // let out_str = String::from_str(ESC).unwrap() + (&(inp.iter().map(|x :&i32| "*".repeat(*x as usize)).collect::<Vec<String>>().join(ESC)));
-        // let mut sl = StringLogger("".to_owned()); 
-        for i in inp.iter().progress(None).with_bounds().with_delims(('{','}')) {
+        let sl = StringLogger::new("".to_owned()); 
+        for i in inp.iter().progress(Some(&sl)).with_bounds().with_delims(('{','}')) {
             //
             exp_foo(i);
         }
-
-        for i in (1..).progress(None){
-            exp_foo(&i);
-        }
+        println!("{}", sl.borrow_string());
     }
 }
