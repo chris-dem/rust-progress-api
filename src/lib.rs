@@ -144,9 +144,13 @@ mod tests {
         let inp  = vec![1,2,3,4];
         // let out_str = String::from_str(ESC).unwrap() + (&(inp.iter().map(|x :&i32| "*".repeat(*x as usize)).collect::<Vec<String>>().join(ESC)));
         let sl = StringLogger::new("".to_owned()); 
-        for i in inp.iter().progress(Some(&sl)).with_bounds().with_delims(('{','}')) {
+        // for i in inp.iter().progress(None).with_bounds().with_delims(('{','}')) {
+        //     //
+        //     exp_foo(i);
+        // }
+        for i in (1..).progress(None) {
             //
-            exp_foo(i);
+            exp_foo(&i);
         }
         println!("{}", sl.borrow_string());
     }
