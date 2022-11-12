@@ -99,13 +99,6 @@ impl <'a,T : Iterator> Progress<'a,T,Bounded> {
  
 }
 
-impl <'a,T : Iterator> Progress<'a,T,UnBounded> {
-
-    
-}
-
-
-
 impl <'a,T : Iterator,B : ProgressDisplay> Iterator for Progress<'a,T,B> {
     type Item = T::Item;
 
