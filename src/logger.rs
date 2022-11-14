@@ -1,7 +1,5 @@
-use std::fmt::Arguments;
-
 pub trait Logger {
-    fn print(&mut self, value: &Arguments<'_>);
+    fn print(&mut self, value: String);
 }
 
 pub struct StringLogger(pub String);
@@ -13,7 +11,7 @@ impl StringLogger {
 }
 
 impl Logger for StringLogger {
-    fn print(&mut self, value: &Arguments<'_>) {
-        self.0.push_str(format!("{}", value).as_str());
+    fn print(&mut self, value: String) {
+        self.0.push_str(value.as_str());
     }
 }
